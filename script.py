@@ -12,7 +12,9 @@ def home():
 
 @app.route('/owners', methods=['GET'])
 def get_owners():
+    # connection to postgresDB
     connection = psycopg2.connect(user="", host="127.0.0.1", port="5432", database="pethotel")
+    # avoid getting arrays of arrays
     cursor = connection.cursor(cursor_factory=RealDictCursor)
     query_text = "SELECT owners.id, owners.name, COUNT(pets.name) AS count FROM owners JOIN pets ON owners.id = pets.owner_id GROUP BY owners.id, owners.name"
     # execute query
@@ -22,5 +24,23 @@ def get_owners():
     print(owners)
     #response 200
     return jsonify(owners)
+
+@app.route('/owners', methods=['POST'])
+def add_owner():
+  print('in addOwners')
+  request_data = request.get_json()
+  name = request_data['name']
+  # connection to postgresDB
+  connection = psycopg2.connect(user="", host="127.0.0.1", port="5432", database="pethotel")
+  # avoid getting arrays of arrays
+  cursor = connection.cursor(cursor_factory=RealDictCursor)
+  print(name)
+  query_text = "INSERT INTO owners (name) VALUES ('%s');" 
+  # execute query
+  cursor.execute(query_text % (name,))
+  # commit the query
+  connection.commit()
+  #response 201
+  return '''OK'''
 
 app.run()
