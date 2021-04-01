@@ -81,6 +81,29 @@ def get_pets():
     #response 200
     return jsonify(pets)
 
+@app.route('/pets', methods=['POST'])
+def add_pet():
+  print('in add_pet')
+  request_data = request.get_json()
+  owner = request_data['owner']
+  name = request_data['name']
+  breed = request_data['breed']
+  color = request_data['color']
+  # connection to postgresDB
+  connection = psycopg2.connect(user="", host="127.0.0.1", port="5432", database="pethotel")
+  # avoid getting arrays of arrays
+  cursor = connection.cursor(cursor_factory=RealDictCursor)
+  query_text = "INSERT INTO pets (owner_id, name, breed, color) VALUES ('%s', '%s', '%s', '%s')" 
+  # execute query
+  cursor.execute(query_text % (owner, name, breed, color,))
+  # commit the query
+  connection.commit()
+  count = cursor.rowcount
+  print(count, 'owner inserted')
+  result = {'status': 'CREATED'}
+  #response 201
+  return make_response(jsonify(result),201)
+
 # PETS ROUTES START
 
 app.run()
