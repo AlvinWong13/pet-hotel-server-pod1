@@ -104,6 +104,20 @@ def add_pet():
   #response 201
   return make_response(jsonify(result),201)
 
+@app.route('/pets/<int:id>', methods=['DELETE'])
+def delete_pets(id):
+  print('in delete_pets')
+  # connection to postgresDB
+  connection = psycopg2.connect(user="", host="127.0.0.1", port="5432", database="pethotel")
+  # avoid getting arrays of arrays
+  cursor = connection.cursor(cursor_factory=RealDictCursor)
+  query_text = "DELETE FROM pets where id = '%s';"
+  cursor.execute(query_text % (id,))
+  connection.commit()
+  count = cursor.rowcount
+  result = {'status': 'deleted'}
+  return make_response(jsonify(result), 201)
+
 # PETS ROUTES START
 
 app.run()
