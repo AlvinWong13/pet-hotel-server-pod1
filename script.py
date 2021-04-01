@@ -118,6 +118,23 @@ def delete_pets(id):
   result = {'status': 'deleted'}
   return make_response(jsonify(result), 201)
 
+@app.route('/pets/<int:id>', methods=['PUT'])
+def pet_checkin(id):
+  print('in checkin')
+  # connection to postgresDB
+  connection = psycopg2.connect(user="", host="127.0.0.1", port="5432", database="pethotel")
+  # avoid getting arrays of arrays
+  cursor = connection.cursor(cursor_factory=RealDictCursor)
+  query_text = "UPDATE pets SET checkin = (CASE WHEN checkin is NULL THEN CURRENT_DATE ELSE NULL END) WHERE id = '%s';" 
+  # execute query
+  cursor.execute(query_text % (id,))
+  # commit the query
+  connection.commit()
+  count = cursor.rowcount
+  result = {'status': 'updated'}
+  #response 201
+  return make_response(jsonify(result),201)
+
 # PETS ROUTES START
 
 app.run()
