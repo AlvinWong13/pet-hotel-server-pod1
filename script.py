@@ -16,7 +16,7 @@ def get_owners():
     connection = psycopg2.connect(user="", host="127.0.0.1", port="5432", database="pethotel")
     # avoid getting arrays of arrays
     cursor = connection.cursor(cursor_factory=RealDictCursor)
-    query_text = "SELECT owners.id, owners.name, COUNT(pets.name) AS count FROM owners LEFT JOIN pets ON owners.id = pets.owner_id GROUP BY owners.id, owners.name"
+    query_text = "SELECT owners.id, owners.name, COUNT(pets.name) AS count FROM owners LEFT JOIN pets ON owners.id = pets.owner_id GROUP BY owners.id, owners.name;"
     # execute query
     cursor.execute(query_text)
     #Select rows from table using cursor.fetchall
