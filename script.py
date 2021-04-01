@@ -9,6 +9,8 @@ app.config["DEBUG"] = True
 def home():
     print('we made it to the server')
     return "<h1>Hello Pet World!</h1><p>I Am in python flask</p>"
+    
+# OWNERS ROUTES START
 
 @app.route('/owners', methods=['GET'])
 def get_owners():
@@ -59,5 +61,26 @@ def delete_owner(id):
   count = cursor.rowcount
   result = {'status': 'deleted'}
   return make_response(jsonify(result), 201)
+
+# OWNERS ROUTES END
+
+# PETS ROUTES START
+
+@app.route('/pets', methods=['GET'])
+def get_pets():
+    # connection to postgresDB
+    connection = psycopg2.connect(user="", host="127.0.0.1", port="5432", database="pethotel")
+    # avoid getting arrays of arrays
+    cursor = connection.cursor(cursor_factory=RealDictCursor)
+    query_text = "SELECT pets.id, owners.name AS owner, pets.name, pets.breed, pets.color, pets.checkin FROM pets JOIN owners ON owners.id = pets.owner_id;"
+    # execute query
+    cursor.execute(query_text)
+    #Select rows from table using cursor.fetchall
+    pets = cursor.fetchall()
+    print(pets)
+    #response 200
+    return jsonify(pets)
+
+# PETS ROUTES START
 
 app.run()
