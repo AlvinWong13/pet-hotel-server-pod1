@@ -46,4 +46,18 @@ def add_owner():
   #response 201
   return make_response(jsonify(result),201)
 
+@app.route('/owners/<int:id>', methods=['DELETE'])
+def delete_owner(id):
+  print('in deleteOwner')
+  # connection to postgresDB
+  connection = psycopg2.connect(user="", host="127.0.0.1", port="5432", database="pethotel")
+  # avoid getting arrays of arrays
+  cursor = connection.cursor(cursor_factory=RealDictCursor)
+  query_text = "DELETE FROM owners where id = '%s';"
+  cursor.execute(query_text % (id,))
+  connection.commit()
+  count = cursor.rowcount
+  result = {'status': 'deleted'}
+  return make_response(jsonify(result), 201)
+
 app.run()
